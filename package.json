@@ -1,0 +1,22 @@
+{
+  "name": "abort-helpers",
+  "version": "1.0.0",
+  "description": "AbortController polyfill and utilities",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "prepublish": "tsc",
+    "build": "tsc",
+    "clean": "rimraf ./*.js ./*.d.ts ./*.js.map ./*.d.ts.map"
+  },
+  "keywords": [
+    "AbortController",
+    "AbortSignal"
+  ],
+  "author": "mailmindlin",
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "typescript": "^4.4.4"
+  }
+}
