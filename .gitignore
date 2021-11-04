@@ -2,7 +2,8 @@
 /node_modules
 
 # Build artifacts
-.js
-.d.ts
-.js.map
-.d.ts.map
+*.js
+*.d.ts
+*.js.map
+*.d.ts.map
+*.tgz

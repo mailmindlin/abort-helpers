@@ -1,3 +1,4 @@
 /.gitignore
+/.gitattributes
 /tsconfig.json
-/README.md
+README.md
