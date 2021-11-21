@@ -8,5 +8,4 @@ import AbortError from './AbortError';
     if (signal !== undefined && signal.aborted)
         //TODO: DOMException compat?
         throw new AbortError();
-        throw new DOMException('AbortError', 'AbortError');
 }
