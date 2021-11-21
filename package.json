@@ -4,6 +4,12 @@
   "description": "AbortController polyfill and utilities",
   "main": "./index.js",
   "types": "./index.d.ts",
+  "files": [
+    "*.js",
+    "*.d.ts",
+    "*.js.map",
+    "*.d.ts.map"
+  ],
   "scripts": {
     "check": "tsc --noEmit",
     "build": "tsc",
