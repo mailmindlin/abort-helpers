@@ -2,9 +2,12 @@
 
 import AbortError from "./AbortError";
 
+// TypeScript is missing abort()
+type AbortSignalStatic = typeof AbortSignal & { abort(): AbortSignal };
+
 let $AbortController: typeof AbortController = AbortController;
 type $AbortController = AbortController;
-let $AbortSignal: typeof AbortSignal = AbortSignal;
+let $AbortSignal: AbortSignalStatic = AbortSignal as any;
 type $AbortSignal = AbortSignal;
 
 if (!$AbortController) {
@@ -100,7 +103,7 @@ if (!$AbortController) {
 	}
 	
 	$AbortController = AbortControllerPoly;
-	$AbortSignal = AbortSignal;
+	$AbortSignal = AbortSignalPoly;
 }
 
 
