@@ -1,39 +1,48 @@
 //TODO: EventTarget polyfill?
 
+import AbortError from "./AbortError";
+
 let $AbortController: typeof AbortController = AbortController;
 type $AbortController = AbortController;
 let $AbortSignal: typeof AbortSignal = AbortSignal;
 type $AbortSignal = AbortSignal;
 
 if (!$AbortController) {
-	function setProp<T extends object, K extends keyof T>(base: T, key: K, value: T[K]) {
-		Object.defineProperty(base, key, { value, writable: true, configurable: true });
+	function setProp<T extends object, K extends keyof T>(base: T, key: K, value: T[K], writable: boolean = false) {
+		Object.defineProperty(base, key, { value, writable, configurable: true, enumerable: false });
 		return value;
 	}
 	
 	/** Polyfill for AbortSignal */
 	class AbortSignalPoly extends EventTarget implements AbortSignal {
 		/** Returns an AbortSignal instance whose aborted flag is set. */
-		static abort() {
-			const controller = new AbortControllerPoly();
-			controller.abort();
-			return controller.signal;
+		static abort(reason?: any) {
+			return AbortControllerPoly.aborted(reason).signal;
 		}
 		
-		/** Returns true if this AbortSignal's AbortController has signaled to abort; otherwise false */
-		declare aborted: boolean;
+		declare readonly reason: any;
 		declare onabort: ((this: AbortSignal, ev: Event) => any) | null;
 		
 		constructor() {
 			super();
 			
-			setProp(this, 'aborted', false);
-			setProp(this, 'onabort', null);
+			setProp(this, 'reason', undefined);
+			setProp(this, 'onabort', null, true);
+		}
+		/** Returns true if this AbortSignal's AbortController has signaled to abort; otherwise false */
+		get aborted() {
+			return this.reason !== undefined;
+		}
+
+		throwIfAborted(): void | never {
+			if (this.aborted)
+				throw this.reason;
 		}
 		
 		override dispatchEvent(e: Event) {
 			if (e.type === 'abort') {
-				this.aborted = true;
+				if (!this.aborted)
+					setProp(this, 'reason', new AbortError())
 				if (typeof this.onabort === 'function')
 					this.onabort(e);
 			}
@@ -45,20 +54,21 @@ if (!$AbortController) {
 	}
 	
 	class AbortControllerPoly implements AbortController {
-		static aborted() {
+		static aborted(reason?: any) {
 			const result = new AbortControllerPoly();
-			result.abort();
+			result.abort(reason);
 			return result;
 		}
 		
 		get signal(): AbortSignal {
 			return setProp(this, 'signal', new AbortSignalPoly());
 		}
-		abort() {
+		abort(reason?: any) {
 			const signal = this.signal;
 			if (signal.aborted)
 				return;
 			let event: Event;
+			setProp(signal, 'reason', reason ?? new AbortError());
 			try {
 				event = new Event('abort');
 			} catch (e) {

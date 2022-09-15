@@ -17,14 +17,14 @@ const AbortError = (() => {
 		}
 	}
 	
-	function AbortErrorDispatch(message: string = 'AbortError') {
+	function AbortErrorDispatch(message: string = 'signal is aborted without reason') {
 		if (typeof new.target === undefined)
 			throw new TypeError(`Failed to construct 'AbortError': Please use the 'new' operator, this constructor cannot be called as a function.`);
 		
 		if (typeof DOMException !== 'undefined') {
 			// Use DOMException constructor, if present
 			try {
-				return new DOMException('AbortError', message);
+				return new DOMException(message, 'AbortError');
 			} catch (e) {
 				if (!(e instanceof TypeError))
 					throw e;
