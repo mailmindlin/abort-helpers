@@ -71,7 +71,7 @@ if (!$AbortController) {
 			if (signal.aborted)
 				return;
 			let event: Event;
-			setProp(signal, 'reason', reason ?? new AbortError());
+			setProp(signal, 'reason', reason !== undefined ? reason : new AbortError());
 			try {
 				event = new Event('abort');
 			} catch (e) {
